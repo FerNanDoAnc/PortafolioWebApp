@@ -24,7 +24,6 @@ export class InfoPaginaService {
 
     this.cargada=true;
     this.info=response;
-    //console.log(response);
     });
   }
   
@@ -34,7 +33,6 @@ export class InfoPaginaService {
     .subscribe((response:any[]) =>{
 
     this.equipo=response;
-    console.log(response);
     });
 
   }
