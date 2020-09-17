@@ -17,21 +17,49 @@ export class ProductosService {
 
   private cargarProductos(){
 
-    this.http.get('https://portafolio-angular-html-b0b40.firebaseio.com/productos_idx.json')
+    return new Promise((resolve, reject) =>{
+      this.http.get('https://portafolio-angular-html-b0b40.firebaseio.com/productos_idx.json')
         .subscribe((response:Producto[]) => {
           this.productos =response;
           this.cargando=false;
+          resolve();
         });  
+    });
+
+    
   }
 
   getProducto(id:String){
     return this.http.get(`https://portafolio-angular-html-b0b40.firebaseio.com/productos/${id}.json`);
   }
+  
   buscarProducto(termino:string){
-    this.productosFiltrado=this.productos.filter(producto =>{
-      return true;
-    });
 
-    console.log(this.productosFiltrado)
+    if(this.productos.length === 0){
+      //esperar q los productos esten cargados
+      this.cargarProductos().then(() =>{
+        //ejecutar despues de tener los productos
+        //aplicar filtro
+        this.filtrarProductos(termino);
+      });
+    }else{
+      //aplcar el filtro 
+      this.filtrarProductos(termino);
+    }
+  }
+
+  private filtrarProductos(termino:string){ 
+    //console.log(this.productos);
+    this.productosFiltrado=[];
+
+    termino=termino.toLocaleLowerCase();
+
+    this.productos.forEach(prod=>{
+      const tituloLower=prod.titulo.toLowerCase();
+
+      if(prod.categoria.indexOf(termino)>=0 || tituloLower.indexOf(termino)>=0){
+        this.productosFiltrado.push(prod);
+      }
+    });
   }
 }
